@@ -1,8 +1,18 @@
 package main
 
 import (
-"github.com/gin-gonic/gin"
-"net/http"
+	"crypto/sha1"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"io"
+	"log"
+	"net/http"
+	"sort"
+	"strings"
+)
+
+const (
+	token = "hlc944792" //设置token
 )
 
 func main() {
@@ -30,7 +40,7 @@ func main() {
 		c.String(http.StatusOK, message)
 	})
 	// 绑定端口，然后启动应用
-	engine.Run(":9205")
+	engine.Run(":80")
 }
 
 /**
@@ -39,6 +49,24 @@ func main() {
 * 输出响应 hello, world
  */
 func WebRoot(context *gin.Context) {
-	context.String(http.StatusOK, "hello, world")
 
+	timestamp := context.Param("timestamp")
+	nonce := context.Param("nonce")
+	signature := context.Param("signature")
+	echostr := context.Param("echostr")
+
+	si := []string{token, timestamp, nonce}
+	sort.Strings(si)            //字典序排序
+	str := strings.Join(si, "") //组合字符串
+	s := sha1.New()             //返回一个新的使用SHA1校验的hash.Hash接口
+	io.WriteString(s, str)      //WriteString函数将字符串数组str中的内容写入到s中
+	hashcode := fmt.Sprintf("%x", s.Sum(nil))
+
+	if hashcode != signature {
+		log.Println("Wechat Service: This http request is not from wechat platform")
+		return
+	}
+	fmt.Fprintf(w, echostr) //原样返回eechostr给微信服务器
+	log.Println("validateUrl Ok")
+	context.String(http.StatusOK,echostr)
 }
