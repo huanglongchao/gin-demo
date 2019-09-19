@@ -50,15 +50,14 @@ func main() {
  */
 func WebRoot(context *gin.Context) {
 
-	timestamp := context.Param("timestamp")
-	nonce := context.Param("nonce")
-	signature := context.Param("signature")
-	echostr := context.Param("echostr")
+	timestamp := context.Query("timestamp")
+	nonce := context.Query("nonce")
+	signature := context.Query("signature")
+	echostr := context.Query("echostr")
 
 	log.Println("timestamp "+timestamp)
 	log.Println("nonce "+nonce)
 	log.Println("signature "+signature)
-	log.Println("echostr "+echostr)
 	log.Println("echostr "+echostr)
 
 	si := []string{token, timestamp, nonce}
