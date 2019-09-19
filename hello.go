@@ -55,6 +55,12 @@ func WebRoot(context *gin.Context) {
 	signature := context.Param("signature")
 	echostr := context.Param("echostr")
 
+	log.Println("timestamp "+timestamp)
+	log.Println("nonce "+nonce)
+	log.Println("signature "+signature)
+	log.Println("echostr "+echostr)
+	log.Println("echostr "+echostr)
+
 	si := []string{token, timestamp, nonce}
 	sort.Strings(si)            //字典序排序
 	str := strings.Join(si, "") //组合字符串
@@ -62,10 +68,13 @@ func WebRoot(context *gin.Context) {
 	io.WriteString(s, str)      //WriteString函数将字符串数组str中的内容写入到s中
 	hashcode := fmt.Sprintf("%x", s.Sum(nil))
 
+	log.Println("hashcode "+hashcode)
+
 	if hashcode != signature {
 		log.Println("Wechat Service: This http request is not from wechat platform")
 		return
 	}
+	log.Println("validateUrl Ok")
 	log.Println("validateUrl Ok")
 	context.String(http.StatusOK,echostr)
 }
