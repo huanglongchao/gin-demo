@@ -66,7 +66,6 @@ func WebRoot(context *gin.Context) {
 		log.Println("Wechat Service: This http request is not from wechat platform")
 		return
 	}
-	fmt.Fprintf(w, echostr) //原样返回eechostr给微信服务器
 	log.Println("validateUrl Ok")
 	context.String(http.StatusOK,echostr)
 }
